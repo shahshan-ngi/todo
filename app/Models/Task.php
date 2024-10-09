@@ -15,4 +15,32 @@ class Task extends Model
         'status',
         'duedate'
     ];
+
+    public static function search($search)
+    {
+        return self::where('title', 'like', '%' . $search . '%')
+            ->orWhere('description', 'like', '%' . $search . '%');
+    }
+
+
+    public static function createTask(array $data)
+    {
+        return self::create($data);
+    }
+
+ 
+    public static function updateTask($id, array $data)
+    {
+        $task = self::findOrFail($id);
+        $task->update($data);
+        return $task;
+    }
+
+ 
+    public static function deleteTask($id)
+    {
+        $task = self::findOrFail($id);
+        $task->delete();
+        return $task;
+    }
 }

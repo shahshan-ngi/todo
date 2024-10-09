@@ -1,22 +1,23 @@
     @extends('layouts.main')
     @section('home-section')
+    @include('shared.message')
     <div class="container">
     <div class="d-flex justify-content-between align-items-center my-5"> 
         <div class="d-flex  align-items-center ">
         <div class="h2 mx-2">All Todos</div>
         <div>
-            <form action="{{route("todo.home")}}" method='GET'>
+            <form action="{{route("todos.index")}}" method='GET'>
                 <input class="me-2" type="search" name="search" placeholder="Search">
 
             </form>
         </div>
         </div>
  
-        <a href="{{route("todo.create")}}" class="btn btn-primary btn-lg">Add Todo</a>
+        <a href="{{route("todos.create")}}" class="btn btn-primary btn-lg">Add Todo</a>
     </div>
 
-    <table class="table table-stripped table-dark">
-        <tr>
+    <table class="table table-stripped ">
+        <tr class="table-secondary">
             <th>Task Name</th>
             <th>Description</th>
             <th>Due date</th>
@@ -31,10 +32,16 @@
                     <td>{{ $todo->duedate }}</td>
                   
                     <td>
-                        <a href="{{route("todo.edit",$todo->id)}}" class="btn btn-success btn-sm">Update</a>
-                        <a href="{{route("todo.delete",$todo->id)}}" class="btn btn-danger btn-sm">Delete</a>
+
+                        <a href="{{route("todos.edit",$todo->id)}}" class="btn btn-success btn-sm">Update</a>
+                        <form action="{{ route('todos.delete', $todo->id) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
                     </td>
-                    <td><form action="{{ route('todo.updatestatus', $todo->id) }}" method="POST" style="display:inline;">
+                    <td>
+                    <form action="{{ route('todos.updatestatus', $todo->id) }}" method="POST" style="display:inline;">
                     @csrf
                     @method('PATCH')
                     <button type="submit" class="btn btn-sm {{ $todo->status == 1 ? 'btn-warning' : 'btn-secondary' }}">
@@ -46,7 +53,7 @@
             @endforeach
         @else
             <tr>
-                <td colspan="4" class="text-center">No tasks found.</td>
+                <td colspan="5" class="text-center">No tasks found</td>
             </tr>
         @endif
     </table>

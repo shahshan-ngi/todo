@@ -14,10 +14,12 @@ use App\Http\Controllers\TaskController;
 |
 */
 
-Route::get('/', [TaskController::class,'index'])->name('todo.home');
-Route::get('/create',[TaskController::class,'create'])->name('todo.create');
-Route::post('/create',[TaskController::class,'store'])->name('todo.store');
-Route::get('/edit/{id}',[TaskController::class,'edit'])->name('todo.edit');
-Route::post('/update',[TaskController::class,'update'])->name('todo.update');
-Route::get('/delete/{id}',[TaskController::class,'delete'])->name('todo.delete');
-Route::patch('/updatestatus/{id}',[TaskController::class,'updateStatus'])->name('todo.updatestatus');
+// Route::get('/', [TaskController::class,'index'])->name('todo.home');
+// Route::get('/create',[TaskController::class,'create'])->name('todo.create');
+// Route::post('/create',[TaskController::class,'store'])->name('todo.store');
+// Route::get('/edit/{id}',[TaskController::class,'edit'])->name('todo.edit');
+// Route::post('/update',[TaskController::class,'update'])->name('todo.update');
+Route::delete('/delete/{id}',[TaskController::class,'delete'])->name('todos.delete');
+Route::patch('/updatestatus/{id}',[TaskController::class,'updateStatus'])->name('todos.updatestatus');
+
+Route::resource('todos', TaskController::class)->except(['destroy','show']);

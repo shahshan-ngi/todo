@@ -9,9 +9,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </head>
 <body>
-<div class="bg-dark"> 
+<div class="bg-secondary"> 
         <div class="container py-3"> <!-- container with padding 3 -->
-            <div class="h1 text-white">Todo List App</div>
+            <a style="text-decoration:none;" href="{{route("todos.index")}}"><div class="h1 text-white">Todo List App</div></a>
         </div>
     </div>
     @yield('home-section')
