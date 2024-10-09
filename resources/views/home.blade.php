@@ -2,8 +2,16 @@
     @section('home-section')
     <div class="container">
     <div class="d-flex justify-content-between align-items-center my-5"> 
+        <div class="d-flex  align-items-center ">
+        <div class="h2 mx-2">All Todos</div>
+        <div>
+            <form action="{{route("todo.home")}}" method='GET'>
+                <input class="me-2" type="search" name="search" placeholder="Search">
 
-        <div class="h2">All Todos</div>
+            </form>
+        </div>
+        </div>
+ 
         <a href="{{route("todo.create")}}" class="btn btn-primary btn-lg">Add Todo</a>
     </div>
 
