@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TaskController;
 
 /*
@@ -19,7 +20,17 @@ use App\Http\Controllers\TaskController;
 // Route::post('/create',[TaskController::class,'store'])->name('todo.store');
 // Route::get('/edit/{id}',[TaskController::class,'edit'])->name('todo.edit');
 // Route::post('/update',[TaskController::class,'update'])->name('todo.update');
-Route::delete('/delete/{id}',[TaskController::class,'delete'])->name('todos.delete');
-Route::patch('/updatestatus/{id}',[TaskController::class,'updateStatus'])->name('todos.updatestatus');
 
-Route::resource('todos', TaskController::class)->except(['destroy','show']);
+Route::middleware('auth')->group(function(){
+    Route::delete('/delete/{id}',[TaskController::class,'delete'])->name('todos.delete');
+    Route::patch('/updatestatus/{id}',[TaskController::class,'updateStatus'])->name('todos.updatestatus');
+    Route::resource('todos', TaskController::class)->except(['destroy','show']);
+    Route::get('todos/logout',[AuthController::class,'logout']);
+});
+
+
+
+Route::get('/login',[AuthController::class,'loginform'])->name('login');
+Route::post('/login',[AuthController::class,'login'])->name('login');
+Route::get('/register',[AuthController::class,'registerform'])->name('todos.registerform');
+Route::post('/register',[AuthController::class,'register'])->name('todos.register');

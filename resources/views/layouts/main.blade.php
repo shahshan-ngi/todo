@@ -13,6 +13,7 @@
         <div class="container py-3"> <!-- container with padding 3 -->
             <a style="text-decoration:none;" href="{{route("todos.index")}}"><div class="h1 text-white">Todo List App</div></a>
         </div>
+      
     </div>
     @yield('home-section')
     
