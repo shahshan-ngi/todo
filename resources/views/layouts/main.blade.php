@@ -10,9 +10,18 @@
 </head>
 <body>
 <div class="bg-secondary"> 
-        <div class="container py-3"> <!-- container with padding 3 -->
-            <a style="text-decoration:none;" href="{{route("todos.index")}}"><div class="h1 text-white">Todo List App</div></a>
-        </div>
+<div class="container py-3 d-flex justify-content-between align-items-center"> 
+  
+    <a style="text-decoration:none;" href="{{route('todos.index')}}">
+        <div class="h1 text-white">Todo List App</div>
+    </a>
+    @Auth
+    <div class="profile-avatar">
+    <img src="{{ Storage::url('images/profile/' . Auth::user()->id . '/' . Auth::user()->profile_image) }}"  class="rounded-circle" width="50" height="50">
+
+    </div>
+    @endAuth
+</div>
       
     </div>
     @yield('home-section')

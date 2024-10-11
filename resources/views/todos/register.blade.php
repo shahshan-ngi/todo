@@ -1,5 +1,6 @@
 @extends('layouts.main')
 @section('home-section')
+@include('shared.message')
 
 <div class="container d-flex justify-content-center align-items-center " style="height:90vh;">
         <div class="col-md-4">
