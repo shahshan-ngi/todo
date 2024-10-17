@@ -27,4 +27,18 @@ class StoreRequest extends FormRequest
             'duedate'=>'required|date|after:yesterday',
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'title.required' => 'my message:A title is required',
+            'description.required' => 'my message:Description is required',
+            'duedate.required' =>'my message: due date is required to proceed'
+        ];
+    }
 }

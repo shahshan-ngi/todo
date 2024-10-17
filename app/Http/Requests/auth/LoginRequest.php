@@ -26,4 +26,19 @@ class LoginRequest extends FormRequest
             'password'=>'required|min:6',
         ];
     }
+
+         /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+     
+            'email.required' => 'my message:Email is required',
+            'password.min'=>'password length is less than 6 characters',
+            'password.required' =>'my message:password is required to proceed',
+        ];
+    }
 }

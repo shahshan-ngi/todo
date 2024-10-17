@@ -77,7 +77,7 @@ class TaskController extends Controller
                 Task::createTask($request);
                 return redirect(route('todos.index'))->with('success', 'Task created successfully');
             }else{
-                return redirect(route('todos.index'))->with('error', '403 Forbidden, you are not authorized to access this url')->withInput();
+                return redirect(route('todos.index'))->with('error', '403 Forbidden, you are not authorized to access this url');
             }
            
         } catch (\Exception $e) {
@@ -100,7 +100,7 @@ class TaskController extends Controller
         }
     }
 
-    public function update($id, Request $request)
+    public function update($id, StoreRequest $request)
     {
         try {
             if($this->allowed()){
@@ -111,7 +111,7 @@ class TaskController extends Controller
             }
      
         } catch (\Exception $e) {
-            return redirect(route("todos.index"))->with('error', 'Something went wrong');
+            return redirect(route("todos.update"))->with('error', 'Something went wrong')->withInput();
         }
     }
 

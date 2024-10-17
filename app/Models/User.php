@@ -55,7 +55,6 @@ class User extends Authenticatable
                 'email'=>$data->email,
                 'password'=>$data->password,
                 'profile_image'=>$name
-
             ]);
             $filepath=$data->file('profile_image')->storeAs("images/profile/{$user->id}",$name,'public');
             $user->profile_image=$name;

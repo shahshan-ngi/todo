@@ -25,7 +25,25 @@ class RegisterRequest extends FormRequest
             'name'=>'required',
             'email'=>'required|email|unique:users,email',
             'password'=>'required|min:6',
-            'profile_image'=>'required|file|mimes:jpg,png,pdf'
+            'profile_image'=>'required|file|mimes:jpg,png'
+        ];
+    }
+
+     /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'my message:Name is required',
+            'email.required' => 'my message:Email is required',
+            'email.unique'=>'This email already exist try another',
+            'password.min'=>'password length is less than 6 characters',
+            'password.required' =>'my message:password is required to proceed',
+            'profile_image.required'=>'my message:profile image is not required',
+            'profile_image.mimes'=>'must be jpg or png'
         ];
     }
 }
