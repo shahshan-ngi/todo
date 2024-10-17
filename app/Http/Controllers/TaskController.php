@@ -3,35 +3,69 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreRequest;
 
 class TaskController extends Controller
 {
+
+    public function allowed(){
+        return auth()->user()->hasAnyRole(['editor','admin']);
+    }
     public function index(Request $request)
     {
         try {
+   
             $tasks = Task::query();
-
-        
+    
+            // Search filter
             if ($request->has('search')) {
-                $tasks = Task::search($request->search);
+                $tasks->search($request->search); 
             }
-
-  
+    
+            // Category filter
+            if ($request->has('categories')) {
+                $selectedCategories = $request->input('categories');
+                $tasks->with('categories')
+                    ->whereHas('categories', function ($query) use ($selectedCategories) {
+                        $query->whereIn('categories.id', $selectedCategories);
+                    });
+            }
+            if($request->has('status')){
+                if($request->status=='0'){
+                    $tasks->Active();
+                }
+                else{
+                    $tasks->Completed();
+                }
+            }
+    
+      
             $todos = $tasks->orderBy('duedate', 'asc')->paginate(10);
-            return view('todos.home', compact('todos'));
+            
+
+            $categories = Category::select('id', 'name')->get();
+            
+            return view('todos.home', compact('todos', 'categories'));
         } catch (\Exception $e) {
-            return redirect(route("todos.index"))->with('error', 'Something went wrong');
+            return redirect(route("todos.index"))->with('error', $e->getMessage());
         }
     }
+    
 
     public function create()
     {   
         try{
-            return view('todos.create');
+            if($this->allowed()){
+                $categories=Category::select('id','name')->get();
+                return view('todos.create',compact('categories'));
+            }else{
+                return redirect(route("todos.index"))->with('error', '403 Forbidden, you are not authorized to access this url');
+            }
+            
         }catch(\Exception $e){
-            return redirect(route("todos.index"))->with('error', 'Something went wrong');
+            return redirect(route("todos.index"))->with('error', '403 Forbidden,you are not authorized to access this url');
         }
       
     }
@@ -39,18 +73,28 @@ class TaskController extends Controller
     public function store(StoreRequest $request)
     {
         try {
-            Task::createTask($request->all());
-            return redirect(route('todos.index'))->with('success', 'Task created successfully');
+            if($this->allowed()){
+                Task::createTask($request);
+                return redirect(route('todos.index'))->with('success', 'Task created successfully');
+            }else{
+                return redirect(route('todos.index'))->with('error', '403 Forbidden, you are not authorized to access this url')->withInput();
+            }
+           
         } catch (\Exception $e) {
-            return redirect(route('todos.create'))->with('error', 'Something went wrong');
+            return redirect(route('todos.create'))->with('error', $e->getMessage())->withInput();
         }
     }
 
     public function edit($id)
     {
         try {
-            $todo = Task::findOrFail($id);
-            return view("todos.update", compact('todo'));
+            if($this->allowed()){
+                $todo = Task::findOrFail($id);
+                return view("todos.update", compact('todo'));
+            }else{
+                return redirect(route("todos.index"))->with('error', '403 Forbidden, you are not authorized to access this url');
+            }
+          
         } catch (\Exception $e) {
             return redirect(route("todos.index"))->with('error', 'Something went wrong');
         }
@@ -59,8 +103,13 @@ class TaskController extends Controller
     public function update($id, Request $request)
     {
         try {
-            Task::updateTask($id, $request->all());
-            return redirect(route("todos.index"))->with('success', 'Updated successfully');
+            if($this->allowed()){
+                Task::updateTask($id, $request->all());
+                return redirect(route("todos.index"))->with('success', 'Updated successfully');
+            }else{
+                return redirect(route("todos.index"))->with('error', '403 Forbidden, you are not authorized to access this url');
+            }
+     
         } catch (\Exception $e) {
             return redirect(route("todos.index"))->with('error', 'Something went wrong');
         }
@@ -69,8 +118,13 @@ class TaskController extends Controller
     public function delete($id)
     {
         try {
-            Task::deleteTask($id);
-            return redirect(route("todos.index"))->with('success', 'Deleted successfully');
+            if($this->allowed()){
+                Task::deleteTask($id);
+                return redirect(route("todos.index"))->with('success', 'Deleted successfully');
+            }else{
+                return redirect(route("todos.index"))->with('error', '403 Forbidden, you are not authorized to access this url');
+            }
+           
         } catch (\Exception $e) {
             return redirect(route("todos.index"))->with('error', 'Something went wrong');
         }
@@ -79,10 +133,12 @@ class TaskController extends Controller
     public function updateStatus($id)
     {   
         try {
+           
             $todo = Task::find($id);
             $todo->status = !$todo->status;
             $todo->save();
             return redirect(route("todos.index"))->with('success', 'Status changed successfully');
+        
         } catch (\Exception $e) {
             return redirect(route("todos.index"))->with('error', 'Something went wrong');
         }

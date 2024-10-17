@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Category;
+use App\Models\Task;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -12,14 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tasks',function(Blueprint $table){
+        Schema::create('category_task', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('description');
-            $table->boolean('status')->default(true);
-            $table->string('duedate');
+            $table->foreignId('category_id')->contrained()->onDelete('cascade');
+            $table->foreignId('task_id')->constrained()->onDelete('cascade');
             $table->timestamps();
-
         });
     }
 
@@ -28,8 +25,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('category_task');
     }
-
 
 };

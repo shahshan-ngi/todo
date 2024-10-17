@@ -23,7 +23,7 @@ use App\Http\Controllers\TaskController;
 
 Route::middleware('auth')->group(function(){
     Route::delete('/delete/{id}',[TaskController::class,'delete'])->name('todos.delete');
-    Route::patch('/updatestatus/{id}',[TaskController::class,'updateStatus'])->name('todos.updatestatus');
+    Route::patch('/updatestatus/{id}',[TaskController::class,'updateStatus'])->name('todos.updatestatus')->middleware('role:admin,editor');
     Route::resource('todos', TaskController::class)->except(['destroy','show']);
     Route::get('todos/logout',[AuthController::class,'logout']);
 });

@@ -11,26 +11,35 @@
             <form action="{{route("todos.store")}}" method="post">
                 @csrf
                 <label for="" class="form-label mt-4">Task Name</label><!-- mt-4 = margin 4 -->
-                <input type="text" name="title" class = "form-control" id="">
+                <input type="text" name="title"  value="{{ old('title') }}" class ="form-control" id="">
                     <div class="text-danger">
                         @error('title')
                             {{$message}}
                         @enderror
                     </div>
                 <label for="" class="form-label mt-4">Description</label>
-                <input type="text" name="description" class = "form-control" id="">
+                <input type="text"  value="{{ old('description') }}" name="description" class = "form-control" id="">
                 <div class="text-danger">
                         @error('description')
                             {{$message}}
                         @enderror
                     </div>
                 <label for="" class="form-label mt-4">Due Date</label>
-                <input type="date" name="duedate" class = "form-control" id="">
+                <input type="date" name="duedate"  value="{{ old('duedate') }}"class = "form-control" id="">
                 <div class="text-danger">
                         @error('duedate')
                             {{$message}}
                         @enderror
                     </div>
+
+                    <select name="categories[]" multiple>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" 
+                            {{ in_array($category->id, old('categories', [])) ? 'selected' : '' }}>
+                            {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
                 <button class="btn btn-primary btn-lg mt-4">Add Todo</button>
             </form>
         </div>

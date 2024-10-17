@@ -30,11 +30,11 @@ class AuthController extends Controller
               
                 return redirect(route("todos.index"))->with('success', 'Logged in successfully');
             }else{
-                return redirect(route("login"))->with('error', 'Invaild Credentials');
+                return redirect(route("login"))->with('error', 'Invaild Credentials')->withInput();
                
             }
         }catch(\Exception $e){
-            return redirect(route("login"))->with('error', $e->getMessage());
+            return redirect(route("login"))->with('error', $e->getMessage())->withInput();
         }
     }
 
@@ -51,24 +51,17 @@ class AuthController extends Controller
          
             $request->password=Hash::make($request->password);
            
-            $user=User::createUser($request->all());
-            if($request->file('profile_image')->isvalid()){
-                $file=$request->file('profile_image');
-                $name=$file->getClientOriginalName();
-                
-                $filepath=$request->file('profile_image')->storeAs("images/profile/{$user->id}",$name,'public');
-                $user->profile_image=$name;
-                $user->save();
-            }
+            $user=User::createUser($request);
+
  
             Auth::login($user);
-            Mail::to('shahshan@nextgeni.com')
-            ->cc(['shahshan871@gmail.com'])
-            ->send(new RegisterationMail($user));
+            // Mail::to('shahshan@nextgeni.com')
+            // ->cc(['shahshan871@gmail.com'])
+            // ->send(new RegisterationMail($user));
             return redirect(route("todos.index"))->with('success', 'Registered successfully');
         }catch(\Exception $e){
           
-            return redirect(route("todos.register"))->with('error',$e->getMessage());
+            return redirect(route("todos.register"))->with('error',$e->getMessage())->withInput();
         }
     }
 
