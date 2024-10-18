@@ -14,7 +14,7 @@ class Task extends Model
     protected $table='tasks';
     protected $fillable=[
         'title',
-        
+        'description',
         'status',
         'duedate'
     ];
@@ -34,8 +34,15 @@ class Task extends Model
 
 
     public static function createTask($data)
-    {
-        return self::create(['title'=>$data->title,'description'=>$data->description,'duedate'=>$data->duedate])->categories()->attach($data->categories);
+    {   
+        $task = self::create([
+            'title' => $data->title,
+            'description' => $data->description,
+            'duedate' => $data->duedate
+        ]);
+        
+        $task->categories()->attach($data->categories);
+        return $task;
     }
 
  
@@ -50,8 +57,9 @@ class Task extends Model
     public static function deleteTask($id)
     {
         $task = self::findOrFail($id);
+  
         $task->delete();
-        return $task;
+       
     }
 
     public function categories(){

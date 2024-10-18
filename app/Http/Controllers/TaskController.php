@@ -74,6 +74,7 @@ class TaskController extends Controller
     {
         try {
             if($this->allowed()){
+                
                 Task::createTask($request);
                 return redirect(route('todos.index'))->with('success', 'Task created successfully');
             }else{
