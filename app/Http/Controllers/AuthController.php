@@ -58,7 +58,7 @@ class AuthController extends Controller
             // Mail::to('shahshan@nextgeni.com')
             // ->cc(['shahshan871@gmail.com'])
             // ->send(new RegisterationMail($user));
-            return redirect(route("todos.index"))->with('success', 'Registered successfully');
+            // return redirect(route("todos.index"))->with('success', 'Registered successfully');
         }catch(\Exception $e){
           
             return redirect(route("todos.register"))->with('error',$e->getMessage())->withInput();

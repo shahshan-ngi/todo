@@ -26,7 +26,7 @@ class AuthController extends Controller
                     'auth_token' => $token->plainTextToken
                 ],'Login successful.', 200);
             } else {
-                return error('Invalid credentials.', 401);
+                return unauthorized('Invalid credentials.');
             }
         } catch (\Exception $e) {
          

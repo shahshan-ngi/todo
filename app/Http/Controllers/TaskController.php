@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Models\Category;
 use Illuminate\Http\Request;
+
+use App\DataTables\TaskDataTable;
 use App\Http\Requests\StoreRequest;
+use Yajra\DataTables\Facades\DataTables;
 
 class TaskController extends Controller
 {
@@ -13,44 +16,86 @@ class TaskController extends Controller
     public function allowed(){
         return auth()->user()->hasAnyRole(['editor','admin']);
     }
-    public function index(Request $request)
-    {
-        try {
+    // public function index(Request $request)
+    // {
+    //     try {
    
-            $tasks = Task::query();
+    //         $tasks = Task::query();
     
-            // Search filter
-            if ($request->has('search')) {
-                $tasks->search($request->search); 
-            }
+    //         // Search filter
+    //         if ($request->has('search')) {
+    //             $tasks->search($request->search); 
+    //         }
     
-            // Category filter
-            if ($request->has('categories')) {
-                $selectedCategories = $request->input('categories');
-                $tasks->with('categories')
-                    ->whereHas('categories', function ($query) use ($selectedCategories) {
-                        $query->whereIn('categories.id', $selectedCategories);
-                    });
-            }
-            if($request->has('status')){
-                if($request->status=='0'){
-                    $tasks->Active();
-                }
-                else{
-                    $tasks->Completed();
-                }
-            }
+    //         // Category filter
+    //         if ($request->has('categories')) {
+    //             $selectedCategories = $request->input('categories');
+    //             $tasks->with('categories')
+    //                 ->whereHas('categories', function ($query) use ($selectedCategories) {
+    //                     $query->whereIn('categories.id', $selectedCategories);
+    //                 });
+    //         }
+    //         if($request->has('status')){
+    //             if($request->status=='0'){
+    //                 $tasks->Active();
+    //             }
+    //             else{
+    //                 $tasks->Completed();
+    //             }
+    //         }
     
       
-            $todos = $tasks->orderBy('duedate', 'asc')->paginate(10);
+    //         $todos = $tasks->orderBy('duedate', 'asc')->paginate(10);
             
 
-            $categories = Category::select('id', 'name')->get();
+    //         $categories = Category::select('id', 'name')->get();
             
-            return view('todos.home', compact('todos', 'categories'));
-        } catch (\Exception $e) {
-            return redirect(route("todos.index"))->with('error', $e->getMessage());
+    //         return view('todos.home', compact('todos', 'categories'));
+    //     } catch (\Exception $e) {
+    //         return redirect(route("todos.index"))->with('error', $e->getMessage());
+    //     }
+    // }
+    public function index(Request $request)
+    {
+        if ($request->ajax()) {
+            $model = Task::query();
+            if ($request->has('searchTitle') && !empty($request->searchTitle)) {
+                $model->where('title', 'like', "%" . $request->searchTitle . "%");
+            }
+    
+            return DataTables::eloquent($model)
+                ->addColumn('title', function ($row) {
+                    return $row->title;
+                })
+                ->addColumn('description', function ($row) {
+                    return $row->description;
+                })
+                ->addColumn('duedate', function ($row) {
+                    return $row->duedate;
+                })
+                ->addColumn('status', function ($row) {
+                    $statusLabel = $row->status == 1 ? 'Pending' : 'Completed';
+                    $statusClass = $row->status == 1 ? 'btn-warning' : 'btn-secondary';
+                    
+                    return '<form action="' . route('todos.updatestatus', $row->id) . '" method="POST" style="display:inline;">
+                                ' . csrf_field() . method_field('PATCH') . '
+                                <button type="submit" class="btn btn-sm ' . $statusClass . '">' . $statusLabel . '</button>
+                            </form>';
+                })
+                ->addColumn('action', function ($row) {
+                    if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('editor')) {
+                        return '<a href="' . route("todos.edit", $row->id) . '" class="btn btn-success btn-sm">Update</a>
+                                <form action="' . route('todos.delete', $row->id) . '" method="POST" style="display:inline;">
+                                    ' . csrf_field() . method_field('DELETE') . '
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>';
+                    }
+                })
+                ->rawColumns(['status', 'action'])
+                ->make(true);
         }
+    
+        return view('todos.index');
     }
     
 

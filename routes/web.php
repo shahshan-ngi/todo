@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,10 @@ Route::middleware('auth')->group(function(){
 
 
 
+ 
+Route::get('/users', [UsersController::class, 'index'])->name('users.index');
+Route::get('/users/datatables', [UsersController::class, 'datatables'])->name('users.datatables');
+Route::get('/todos', [TaskController::class, 'index'])->name('todos.index');
 Route::get('/login',[AuthController::class,'loginform'])->name('login');
 Route::post('/login',[AuthController::class,'login'])->name('login');
 Route::get('/register',[AuthController::class,'registerform'])->name('todos.registerform');

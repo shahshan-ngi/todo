@@ -7,6 +7,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Helper\ResponseHelper;
 use App\Http\Requests\StoreRequest;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TaskResource;
 use App\Http\Resources\TaskCollection;
@@ -36,7 +37,7 @@ class TaskController extends Controller
             }
     
             if ($request->has('status')) {
-                if ($request->status == '0') {
+                if ($request->status == '1') {
                     $tasks->Active(); 
                 } else {
                     $tasks->Completed(); 
@@ -47,6 +48,7 @@ class TaskController extends Controller
             
        
             $taskCollection = new TaskCollection($todos); 
+            // $taskCollection= TaskResource::collection($todos);
     
             $categories = new CategoriesCollection(Category::all());
     
@@ -62,12 +64,13 @@ class TaskController extends Controller
         try {
             if ($this->allowed()) {
                 $task = Task::createTask($request);
+                Log::info("task created sucessfully",['id'=>$task->id]);
                  return success(new TaskResource($task), 'Task created successfully',201);
             } else {
-                return error('403 Forbidden, you are not authorized to access this resource',403); 
+                return forbidden(); 
             }
         } catch (\Exception $e) {
-    
+            Log::error("an error occured with exception :$e ");
             return error($e->getMessage());
         }
     }
@@ -80,7 +83,7 @@ class TaskController extends Controller
                 return success(new TaskResource($task), 'Task updated successfully', 200);
             } else {
            
-                return error('403 Forbidden, you are not authorized to access this resource', 403);
+                return forbidden();
             }
         } catch (\Exception $e) {
           
@@ -97,7 +100,7 @@ class TaskController extends Controller
                 return success(null, 'Task deleted successfully', 200);
             } else {
              
-                return error('403 Forbidden, you are not authorized to access this resource', 403);
+                return forbidden();
             }
         } catch (\Exception $e) {
         
@@ -116,8 +119,7 @@ class TaskController extends Controller
     
             return success(null, 'Status changed successfully', 200);}
             else {
-             
-                return error('403 Forbidden, you are not authorized to access this resource', 403);
+                return forbidden();
             }
         } catch (\Exception $e) {
 

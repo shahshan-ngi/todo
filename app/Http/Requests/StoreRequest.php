@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Helper\ResponseHelper;
 
 class StoreRequest extends FormRequest
 {
@@ -40,6 +41,14 @@ class StoreRequest extends FormRequest
             'description.required' => 'my message:Description is required',
             'duedate.required' =>'my message: due date is required to proceed'
         ];
+    }
+
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        throw new \Illuminate\Validation\ValidationException(
+            $validator,
+            validationError($validator->errors())
+        );
     }
 
 }
