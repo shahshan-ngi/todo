@@ -22,10 +22,10 @@ use App\Http\Controllers\UsersController;
 // Route::get('/edit/{id}',[TaskController::class,'edit'])->name('todo.edit');
 // Route::post('/update',[TaskController::class,'update'])->name('todo.update');
 
-Route::middleware('auth')->group(function(){
+Route::middleware('auth:sanctum')->group(function(){
     Route::delete('/delete/{id}',[TaskController::class,'delete'])->name('todos.delete');
     Route::patch('/updatestatus/{id}',[TaskController::class,'updateStatus'])->name('todos.updatestatus')->middleware('role:admin,editor');
-    Route::resource('todos', TaskController::class)->except(['destroy','show']);
+   Route::resource('todos', TaskController::class)->except(['destroy','show']);
     Route::get('todos/logout',[AuthController::class,'logout']);
 });
 
@@ -34,7 +34,7 @@ Route::middleware('auth')->group(function(){
  
 Route::get('/users', [UsersController::class, 'index'])->name('users.index');
 Route::get('/users/datatables', [UsersController::class, 'datatables'])->name('users.datatables');
-Route::get('/todos', [TaskController::class, 'index'])->name('todos.index');
+//Route::get('/todos', [TaskController::class, 'index'])->name('todos.index');
 Route::get('/login',[AuthController::class,'loginform'])->name('login');
 Route::post('/login',[AuthController::class,'login'])->name('login');
 Route::get('/register',[AuthController::class,'registerform'])->name('todos.registerform');

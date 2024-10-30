@@ -55,12 +55,22 @@ class TaskController extends Controller
     //         return redirect(route("todos.index"))->with('error', $e->getMessage());
     //     }
     // }
+
+    
     public function index(Request $request)
     {
+        $categories=Category::all();
         if ($request->ajax()) {
             $model = Task::query();
             if ($request->has('searchTitle') && !empty($request->searchTitle)) {
                 $model->where('title', 'like', "%" . $request->searchTitle . "%");
+            }
+            if($request->has('categories') && !empty($request->categories)){
+                $selectedCategories = $request->input('categories');
+                $model->with('categories')
+                    ->whereHas('categories', function ($query) use ($selectedCategories) {
+                        $query->whereIn('categories.id', $selectedCategories);
+                    });
             }
     
             return DataTables::eloquent($model)
@@ -95,7 +105,7 @@ class TaskController extends Controller
                 ->make(true);
         }
     
-        return view('todos.index');
+        return view('todos.index',compact('categories'));
     }
     
 

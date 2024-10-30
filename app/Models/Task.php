@@ -44,7 +44,7 @@ class Task extends Model
         $task->categories()->attach($data->categories);
         return $task;
     }
-
+    
  
     public static function updateTask($id, array $data)
     {
